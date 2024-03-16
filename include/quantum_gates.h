@@ -2,6 +2,7 @@
 #ifndef QUANTUM_GATES_H
 #define QUANTUM_GATES_H
 
+#include <cmath>
 #include <vector>
 #include <complex>
 

@@ -105,6 +105,56 @@ public:
 		return true; // Passed all checks, matrix is unitary
 	}
 
+	// Pseudocode function to measure the ith qubit in a quantum state vector
+	// Note: This is a simulation and doesn't actually affect the state vector
+	bool measureQubit(size_t i) {
+		double probabilityOfOne = 0.0;
+
+		// Calculate the probability of the ith qubit being in state |1>
+		// We sum the magnitudes squared of all amplitudes where the ith qubit is |1>
+		for (size_t index = 0; index < stateVector.size(); ++index) {
+			// Check if the ith qubit is |1> in this part of the superposition
+			if (index & (1 << i)) { // Bitwise operation to check the ith bit
+				probabilityOfOne += norm(stateVector[index]); // Add the squared magnitude (norm) of the amplitude
+			}
+		}
+
+		// Simulate a measurement based on the calculated probabilities
+		double randomMeasurement = (double)rand() / RAND_MAX; // Generate a random number between 0 and 1
+		if (randomMeasurement < probabilityOfOne) {
+			return true; // The measurement result is |1>
+		} else {
+			return false; // The measurement result is |0>
+		}
+	}
+
+	void applyModularMultiplication(int base, int modulus) {
+		vector<complex<double>> newStateVector(stateVector.size(), complex<double>(0, 0));
+
+		// Assuming the stateVector index represents the value in computational basis,
+		// we apply "modular multiplication" to this conceptual value.
+		for (size_t i = 0; i < stateVector.size(); ++i) {
+			// Compute the new value after modular multiplication
+			size_t newValue = (i * base) % modulus;
+
+			// This assumes a one-to-one mapping which might not hold true for non-power-of-two moduli,
+			// but for simulation's sake, we're applying a simplified model.
+			// Find the index in the state vector that corresponds to this new value.
+			// In a true quantum system, we'd be transforming quantum states, but here we simulate
+			// by moving amplitudes based on classical computation results.
+			size_t newIndex = newValue; // Direct mapping for simulation purposes
+
+			// Make sure not to exceed the vector bounds
+			if (newIndex < stateVector.size()) {
+				newStateVector[newIndex] = stateVector[i];
+			}
+		}
+
+		// Update the original state vector
+		stateVector = newStateVector;
+	}
+
+
 	// Apply a single-qubit quantum gate to the state
 	void applyGate(const vector<vector<complex<double>>>& gateMatrix, size_t targetQubit) {
 		// Validate the gate matrix
